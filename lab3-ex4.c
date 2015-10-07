@@ -10,6 +10,11 @@
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
 
+typedef struct {
+    int x; 
+    int y;
+} Character;
+
 
 int stringToInt(char* str){
 	str++;
@@ -111,6 +116,10 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 
 int main (void)
 {
+	Character player1; 
+	player1.x = 8; 
+	player1.y = 4;
+	
 	uint8_t current_column = 0;
 	int screen_index = 6;
 	
@@ -139,10 +148,9 @@ int main (void)
     pio_config_set(LEDMAT_ROW6_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LEDMAT_ROW7_PIO, PIO_OUTPUT_HIGH);
     
-
+	matrix[player1.x][player1.y] = 0;
     while (1)
     {
-		
 		
 		display_column (stringToInt(matrix[screen_index]), current_column);
     
@@ -165,9 +173,46 @@ int main (void)
         navswitch_update ();
         
         
-        if (navswitch_push_event_p (NAVSWITCH_NORTH))
+        if (navswitch_push_event_p (NAVSWITCH_NORTH)){
+			
+			/*pio_output_high(LEDMAT_COL1_PIO);
+			pio_output_high(LEDMAT_COL5_PIO);
+			pio_output_high(LEDMAT_COL2_PIO);
+			pio_output_high(LEDMAT_COL3_PIO);
+			pio_output_high(LEDMAT_COL4_PIO);
 
-        if (navswitch_push_event_p (NAVSWITCH_SOUTH))
+    
+			pio_output_high(LEDMAT_ROW1_PIO);
+			pio_output_high(LEDMAT_ROW2_PIO);
+			pio_output_high(LEDMAT_ROW3_PIO);
+			pio_output_high(LEDMAT_ROW4_PIO);
+			pio_output_high(LEDMAT_ROW5_PIO);
+			pio_output_high(LEDMAT_ROW6_PIO);
+			pio_output_high(LEDMAT_ROW7_PIO);*/
+			
+			
+			matrix[player1.x][player1.y] = '0';
+			player1.y++;
+			matrix[player1.x][player1.y] = '1';
+		}
+
+        if (navswitch_push_event_p (NAVSWITCH_SOUTH)){
+			matrix[player1.x][player1.y] = '0';
+			player1.y--;
+			matrix[player1.x][player1.y] = '1';
+		}
+		
+		if (navswitch_push_event_p (NAVSWITCH_EAST)){	
+			matrix[player1.x][player1.y] = '0';
+			player1.x++;
+			matrix[player1.x][player1.y] = '1';
+		}
+
+        if (navswitch_push_event_p (NAVSWITCH_WEST)){
+			matrix[player1.x][player1.y] = '0';
+			player1.x--;
+			matrix[player1.x][player1.y] = '1';
+		}
 
        
        
