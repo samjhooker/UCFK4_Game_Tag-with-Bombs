@@ -10,6 +10,36 @@
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
 
+
+int stringToInt(char* str){
+    int result = 0;
+    while(*str) {
+	result = result << 1;
+	//printf("%d\n", result);
+	//printf("%c\n\n", *things);
+	result += (*str != '0');
+	str++;
+	}
+	return result;
+}
+
+
+/*int stringToBinary(char *s) {
+  return (int) strtol(s, NULL, 2);
+}*/
+
+char* matrix[] ={"0000000",
+				  "0000000",
+				  "0000000",
+				  "0000000",
+				  "0000000",
+				  //screen two starts here
+				  "0000000",
+				  "0100010",
+				  "0000000",
+				  "0111110",
+				  "0000000"};
+
 /** Define PIO pins driving LED matrix rows.  */
 
 static const pio_t rows[] =
@@ -30,7 +60,7 @@ static const pio_t cols[] =
 
 static const uint8_t bitmap[] =
 {
-    0x41, 0x0, 0x0, 0x0, 0x41
+    //stringToInt(matrix[5]), stringToInt(matrix[6]), stringToInt(matrix[7]), stringToInt(matrix[8]), stringToInt(matrix[9])
 };
 
 
@@ -79,6 +109,7 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 int main (void)
 {
 	uint8_t current_column = 0;
+	int screen_index = 5;
 	
     system_init ();
     //tinygl_init (PACER_RATE);
@@ -110,13 +141,18 @@ int main (void)
     {
 		
 		
-		display_column (bitmap[current_column], current_column);
+		display_column (stringToInt(matrix[screen_index]), current_column);
     
         current_column++;
+        screen_index++;
     
         if (current_column > (LEDMAT_COLS_NUM - 1))
         {
             current_column = 0;
+        }  
+        if (screen_index > (9))
+        {
+            screen_index = 5;
         }  
 		
 		
@@ -150,6 +186,7 @@ int main (void)
         //display_character (character);
         
     }
+    
 
     return 0;
 }
