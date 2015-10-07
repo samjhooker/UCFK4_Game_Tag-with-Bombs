@@ -12,13 +12,14 @@
 
 
 int stringToInt(char* str){
-    int result = 0;
-    while(*str) {
-	result = result << 1;
-	//printf("%d\n", result);
-	//printf("%c\n\n", *things);
-	result += (*str != '0');
 	str++;
+    int result = 0;
+    int i;
+    for (i = 0; i < 7; i++) 
+    {
+		result = result << 1;
+		result += (*str != '0');
+		str++;
 	}
 	return result;
 }
@@ -28,17 +29,19 @@ int stringToInt(char* str){
   return (int) strtol(s, NULL, 2);
 }*/
 
-char* matrix[] ={"0000000",
-				  "0000000",
-				  "0000000",
-				  "0000000",
-				  "0000000",
+char* matrix[] ={"eeeeeeeee",
+				  "e0000000e",
+				  "e0000000e",
+				  "e0000000e",
+				  "e0000000e",
+				  "e0000000e",
 				  //screen two starts here
-				  "0000000",
-				  "0100010",
-				  "0000000",
-				  "0111110",
-				  "0000000"};
+				  "e0000000e",
+				  "e0000000e",
+				  "e0001000e",
+				  "e0000000e",
+				  "e0000000e",
+				  "eeeeeeeee"};
 
 /** Define PIO pins driving LED matrix rows.  */
 
@@ -109,7 +112,7 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 int main (void)
 {
 	uint8_t current_column = 0;
-	int screen_index = 5;
+	int screen_index = 6;
 	
     system_init ();
     //tinygl_init (PACER_RATE);
@@ -150,9 +153,9 @@ int main (void)
         {
             current_column = 0;
         }  
-        if (screen_index > (9))
+        if (screen_index > (10))
         {
-            screen_index = 5;
+            screen_index = 6;
         }  
 		
 		
