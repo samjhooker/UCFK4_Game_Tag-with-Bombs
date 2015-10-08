@@ -10,6 +10,8 @@
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
 #define BOMB_TIME 12 //seconds
+#define BOMB_FLASH_TIME 0.2 //seconds
+
 #define LED_PIO PIO_DEFINE (PORT_C, 2)
 
 typedef struct {
@@ -21,14 +23,18 @@ typedef struct {
 
 
 
-int stringToInt(char* str){
+int stringToInt(char* str, int bombsActive){
 	str++;
     int result = 0;
     int i;
     for (i = 0; i < 7; i++) 
     {
 		result = result << 1;
-		result += ((*str != '0') && (*str != 'a') && (*str != 'b')&& (*str != 'c')&& (*str != 'd')&& (*str != 'f')&& (*str != 'g')&& (*str != 'h')&& (*str != 'i')&& (*str != 'j'));
+		if (bombsActive == 0){
+			result += ((*str != '0') && (*str != 'a') && (*str != 'b')&& (*str != 'c')&& (*str != 'd')&& (*str != 'f')&& (*str != 'g')&& (*str != 'h')&& (*str != 'i')&& (*str != 'j'));
+		}else{
+			result += ((*str != '0') && (*str != 'a') && (*str != 'b')&& (*str != 'c')&& (*str != 'd')&& (*str != 'f')&& (*str != 'g')&& (*str != 'h')&& (*str != 'i')&& (*str != 'j')&& (*str != 'x'));
+		}
 		str++;
 	}
 	 
@@ -133,6 +139,8 @@ int main (void)
 {
 	
 	int counter = 0;
+	int flashCounter = 0;
+	int flash = 1;
 	
 	Character player1; 
 	player1.x = 8; 
@@ -179,8 +187,13 @@ int main (void)
 			player1.hasBomb = 1;
 			counter = 0;
 		}
+		flashCounter++;
+		if (flashCounter > (PACER_RATE * BOMB_FLASH_TIME)){
+			flash = 1-flash;
+			flashCounter = 0;
+		}
 		
-		display_column (stringToInt(matrix[screen_index]), current_column);
+		display_column (stringToInt(matrix[screen_index], flash), current_column);
     
         current_column++;
         screen_index++;
