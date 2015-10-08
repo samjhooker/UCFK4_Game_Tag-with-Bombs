@@ -23,10 +23,12 @@ int stringToInt(char* str){
     for (i = 0; i < 7; i++) 
     {
 		result = result << 1;
-		result += (*str != '0');
+		result += ((*str != '0') && (*str != 'a') && (*str != 'b')&& (*str != 'c')&& (*str != 'd')&& (*str != 'f')&& (*str != 'g')&& (*str != 'h')&& (*str != 'i')&& (*str != 'j'));
 		str++;
 	}
+	 
 	return result;
+	
 }
 
 
@@ -35,17 +37,17 @@ int stringToInt(char* str){
 }*/
 
 char* matrix[] ={"eeeeeeeee",
-				  "e0000000e",
-				  "e0000000e",
-				  "e0000000e",
-				  "e0000000e",
-				  "e0000000e",
+				  "eaaaaaaae",
+				  "ebbbbbbbe",
+				  "eccccccce",
+				  "eddddddde",
+				  "efffffffe",
 				  //screen two starts here
-				  "e0000000e",
-				  "e0000000e",
+				  "eggggggge",
+				  "ehhhhhhhe",
 				  "e0001000e",
-				  "e0000000e",
-				  "e0000000e",
+				  "eiiiiiiie",
+				  "ejjjjjjje",
 				  "eeeeeeeee"};
 
 /** Define PIO pins driving LED matrix rows.  */
@@ -87,6 +89,14 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 {
 	int inCol;
 	int current_row;
+
+	pio_output_high(LEDMAT_ROW1_PIO);
+	pio_output_high(LEDMAT_ROW2_PIO);
+	pio_output_high(LEDMAT_ROW3_PIO);
+	pio_output_high(LEDMAT_ROW4_PIO);
+	pio_output_high(LEDMAT_ROW5_PIO);
+	pio_output_high(LEDMAT_ROW6_PIO);
+	pio_output_high(LEDMAT_ROW7_PIO);
 	
 	for (inCol = 0; inCol < LEDMAT_COLS_NUM; inCol++) {
 		if (inCol == current_column) {
@@ -148,7 +158,6 @@ int main (void)
     pio_config_set(LEDMAT_ROW6_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LEDMAT_ROW7_PIO, PIO_OUTPUT_HIGH);
     
-	matrix[player1.x][player1.y] = 0;
     while (1)
     {
 		
@@ -190,28 +199,37 @@ int main (void)
 			pio_output_high(LEDMAT_ROW6_PIO);
 			pio_output_high(LEDMAT_ROW7_PIO);*/
 			
+			if (matrix[player1.x][player1.y + 1] != 'e'){
+				matrix[player1.x][player1.y] = '0';
+				player1.y++;
+				matrix[player1.x][player1.y] = '1';
+			}
 			
-			matrix[player1.x][player1.y] = '0';
-			player1.y++;
-			matrix[player1.x][player1.y] = '1';
 		}
 
         if (navswitch_push_event_p (NAVSWITCH_SOUTH)){
-			matrix[player1.x][player1.y] = '0';
-			player1.y--;
-			matrix[player1.x][player1.y] = '1';
+			if (matrix[player1.x][player1.y - 1] != 'e'){
+				matrix[player1.x][player1.y] = '0';
+				player1.y--;
+				matrix[player1.x][player1.y] = '1';
+			}
 		}
 		
 		if (navswitch_push_event_p (NAVSWITCH_EAST)){	
-			matrix[player1.x][player1.y] = '0';
-			player1.x++;
-			matrix[player1.x][player1.y] = '1';
+			
+			if (matrix[player1.x+1][player1.y] != 'e'){
+				matrix[player1.x][player1.y] = '0';
+				player1.x++;
+				matrix[player1.x][player1.y] = '1';
+			}
 		}
 
         if (navswitch_push_event_p (NAVSWITCH_WEST)){
-			matrix[player1.x][player1.y] = '0';
-			player1.x--;
-			matrix[player1.x][player1.y] = '1';
+			if (matrix[player1.x-1][player1.y] != 'e'){
+				matrix[player1.x][player1.y] = '0';
+				player1.x--;
+				matrix[player1.x][player1.y] = '1';
+			}
 		}
 
        
