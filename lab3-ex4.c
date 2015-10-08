@@ -9,11 +9,16 @@
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
+#define BOMB_TIME 12 //seconds
+#define LED_PIO PIO_DEFINE (PORT_C, 2)
 
 typedef struct {
     int x; 
     int y;
+    int hasBomb;
 } Character;
+
+
 
 
 int stringToInt(char* str){
@@ -126,9 +131,16 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 
 int main (void)
 {
+	
+	int counter = 0;
+	
 	Character player1; 
 	player1.x = 8; 
 	player1.y = 4;
+	player1.hasBomb = 0;
+	
+	int prevX;
+	int prevY;
 	
 	uint8_t current_column = 0;
 	int screen_index = 6;
@@ -143,6 +155,8 @@ int main (void)
 	ir_uart_init();
 
     pacer_init (PACER_RATE);
+    pio_config_set (LED_PIO, PIO_OUTPUT_LOW);
+    
     pio_config_set(LEDMAT_COL1_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LEDMAT_COL5_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LEDMAT_COL2_PIO, PIO_OUTPUT_HIGH);
@@ -160,6 +174,11 @@ int main (void)
     
     while (1)
     {
+		counter ++;
+		if (counter > (PACER_RATE * BOMB_TIME)){
+			player1.hasBomb = 1;
+			counter = 0;
+		}
 		
 		display_column (stringToInt(matrix[screen_index]), current_column);
     
@@ -175,6 +194,7 @@ int main (void)
             screen_index = 6;
         }  
 		
+		//pio_output_high (LED_PIO);
 		
 		
         pacer_wait ();
@@ -200,6 +220,10 @@ int main (void)
 			pio_output_high(LEDMAT_ROW7_PIO);*/
 			
 			if (matrix[player1.x][player1.y + 1] != 'e'){
+				
+				prevX = player1.x;
+				prevY = player1.y;
+				
 				matrix[player1.x][player1.y] = '0';
 				player1.y++;
 				matrix[player1.x][player1.y] = '1';
@@ -209,6 +233,10 @@ int main (void)
 
         if (navswitch_push_event_p (NAVSWITCH_SOUTH)){
 			if (matrix[player1.x][player1.y - 1] != 'e'){
+				
+				prevX = player1.x;
+				prevY = player1.y;
+				
 				matrix[player1.x][player1.y] = '0';
 				player1.y--;
 				matrix[player1.x][player1.y] = '1';
@@ -218,6 +246,10 @@ int main (void)
 		if (navswitch_push_event_p (NAVSWITCH_EAST)){	
 			
 			if (matrix[player1.x+1][player1.y] != 'e'){
+				
+				prevX = player1.x;
+				prevY = player1.y;
+				
 				matrix[player1.x][player1.y] = '0';
 				player1.x++;
 				matrix[player1.x][player1.y] = '1';
@@ -226,18 +258,40 @@ int main (void)
 
         if (navswitch_push_event_p (NAVSWITCH_WEST)){
 			if (matrix[player1.x-1][player1.y] != 'e'){
+				
+				prevX = player1.x;
+				prevY = player1.y;
+				
 				matrix[player1.x][player1.y] = '0';
 				player1.x--;
 				matrix[player1.x][player1.y] = '1';
 			}
 		}
-
+		
+		
+		if (player1.hasBomb == 1){
+			pio_output_high (LED_PIO);
+		}else{
+			pio_output_low (LED_PIO);
+		}
+		
        
        
         /* TODO: Transmit the character over IR on a NAVSWITCH_PUSH
            event.  */
         if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			//ir_uart_putc (character);
+			
+			if (player1.hasBomb == 1){
+				
+				matrix[prevX][prevY] = 'x';
+				
+				
+			}
+			
+			
+			player1.hasBomb = 0;
+			
+			
 		}
            
         //revieve???
