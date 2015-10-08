@@ -223,15 +223,6 @@ void playGame (Character player, character otherPlayer)
 	int flashCounter = 0;
 	int flash = 1;
 	
-	Character player1; 
-	player1.x = 8; 
-	player1.y = 4;
-	player1.hasBomb = 0;
-
-	Character player2; 
-	player2.x = 3; 
-	player2.y = 4;
-	player2.hasBomb = 0;
 	
 	int prevX;
 	int prevY;
@@ -424,10 +415,22 @@ int main(void){
 
     matrix = gameBoard; //assigns the gameboard to be the main one
 
+
+	Character player1; 
+	player1.x = 8; 
+	player1.y = 4;
+	player1.hasBomb = 0;
+
+	Character player2; 
+	player2.x = 3; 
+	player2.y = 4;
+	player2.hasBomb = 0;
+
+
     if(playerNumber ==1 ){
-    	player1Run();
+    	playGame(player1, player2);
     }else{
-    	player2Run();
+    	playGame(player2, player1);
     }
 
 
