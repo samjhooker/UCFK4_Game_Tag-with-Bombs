@@ -11,8 +11,11 @@
 #define MESSAGE_RATE 10
 #define BOMB_TIME 12 //seconds
 #define BOMB_FLASH_TIME 0.2 //seconds
-
 #define LED_PIO PIO_DEFINE (PORT_C, 2)
+
+int win = 0;
+int lose = 0;
+
 
 typedef struct {
     int x;
@@ -81,20 +84,6 @@ static const pio_t cols[] =
 };
 
 
-static const uint8_t bitmap[] =
-{
-    //stringToInt(matrix[5]), stringToInt(matrix[6]), stringToInt(matrix[7]), stringToInt(matrix[8]), stringToInt(matrix[9])
-};
-
-
-
-void display_character (char character)
-{
-    char buffer[2];
-    buffer[0] = character;
-    buffer[1] = '\0';
-    tinygl_text (buffer);
-}
 
 
 static void display_column (uint8_t row_pattern, uint8_t current_column)
@@ -137,16 +126,54 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 }
 
 
+
+
+void showExplosion(int x, int y, int frame){
+  if(frame == 1){
+  matrix[x+1][y+1] = 'w';
+  matrix[x-1][y-1] = 'w';
+  matrix[x+1][y-1] = 'w';
+  matrix[x-1][y+1] = 'w';
+}else if (frame ==2){
+  matrix[x+2][y+0] = 'w';
+  matrix[x-2][y-0] = 'w';
+  matrix[x+0][y-2] = 'w';
+  matrix[x-0][y+2] = 'w';
+}else{
+  matrix[x+3][y+3] = 'w';
+  matrix[x-3][y-3] = 'w';
+  matrix[x+3][y-3] = 'w';
+  matrix[x-3][y+3] = 'w';
+}
+}
+
+
+void checkForWinOrLose(int x, int y){
+
+  if (matrix[x][y] == '1') { //hit other player
+    win = 1;
+    ir_uart_putc ('L');
+  }else if (matrix[x][y] == 'x'){ //hit a bomb
+    lose = 1;
+    ir_uart_putc ('W');
+  }
+
+}
+
 void goNorth(Character *player, int transmit){
 
   if (matrix[player->x][player->y + 1] != 'e'){
+
+
 
     player->prevX = player->x;
     player->prevY = player->y;
 
     matrix[player->x][player->y] = '0';
     player->y++;
+    checkForWinOrLose(player->x, player->y);
     matrix[player->x][player->y] = '1';
+
 
     if (transmit == 1){
       ir_uart_putc ('n');
@@ -164,7 +191,9 @@ void goSouth(Character *player, int transmit){
 
     matrix[player->x][player->y] = '0';
     player->y--;
+    checkForWinOrLose(player->x, player->y);
     matrix[player->x][player->y] = '1';
+
 
     if (transmit == 1){
       ir_uart_putc ('s');
@@ -182,7 +211,9 @@ void goEast(Character *player, int transmit){
 
     matrix[player->x][player->y] = '0';
     player->x++;
+    checkForWinOrLose(player->x, player->y);
     matrix[player->x][player->y] = '1';
+
 
     if (transmit == 1){
       ir_uart_putc ('e');
@@ -200,7 +231,9 @@ void goWest(Character *player, int transmit){
 
     matrix[player->x][player->y] = '0';
     player->x--;
+    checkForWinOrLose(player->x, player->y);
     matrix[player->x][player->y] = '1';
+
 
     if (transmit == 1){
       ir_uart_putc ('w');
@@ -228,6 +261,7 @@ int main (void)
 	int counter = 0;
 	int flashCounter = 0;
 	int flash = 1;
+  int explosionCounter = 0;
 
 	Character player1;
 	player1.x = 8;
@@ -278,15 +312,16 @@ int main (void)
 
     while (1)
     {
-		counter ++;
-		if (counter > (PACER_RATE * BOMB_TIME)){
-			player1.hasBomb = 1;
-			counter = 0;
-		}
-		flashCounter++;
-		if (flashCounter > (PACER_RATE * BOMB_FLASH_TIME)){
-			flash = 1-flash;
-			flashCounter = 0;
+
+		  counter ++;
+		  if (counter > (PACER_RATE * BOMB_TIME)){
+			     player1.hasBomb = 1;
+			   counter = 0;
+		  }
+		  flashCounter++;
+		      if (flashCounter > (PACER_RATE * BOMB_FLASH_TIME)){
+			      flash = 1-flash;
+			      flashCounter = 0;
 		}
 
 		display_column (stringToInt(matrix[screen_index], flash), current_column);
@@ -304,6 +339,31 @@ int main (void)
         }
 
 
+        if (win > 0){
+          if (explosionCounter > (PACER_RATE * 0.15)){
+            if (win == 4){
+              break;
+            }
+            showExplosion(player2.x, player2.y, win);
+            explosionCounter = 0;
+            win++;
+          }
+          explosionCounter++;
+        }
+
+        if (lose > 0){
+          if (explosionCounter > (PACER_RATE * 0.15)){
+            if (lose == 4){
+              break;
+            }
+            showExplosion(player1.x, player1.y, lose);
+            explosionCounter = 0;
+            lose++;
+          }
+          explosionCounter++;
+        }
+
+
 
         pacer_wait ();
         //tinygl_update ();
@@ -312,7 +372,6 @@ int main (void)
 
     if (navswitch_push_event_p (NAVSWITCH_NORTH))
 			goNorth(&player1, 1);
-
 
     if (navswitch_push_event_p (NAVSWITCH_SOUTH))
       goSouth(&player1, 1);
@@ -336,7 +395,6 @@ int main (void)
     if (navswitch_push_event_p (NAVSWITCH_PUSH)){
 
 		  if (player1.hasBomb == 1){
-				  //matrix[player1.prevX][player1.prevY] = 'x';
           placeBomb(&player1, 1);
 			}
 			player1.hasBomb = 0;
@@ -362,6 +420,12 @@ int main (void)
        		case 'b'  :
       				placeBomb(&player2, 0);
        				break;
+          case 'W' :
+              win = 1;
+              break;
+          case 'L' :
+              lose = 1;
+              break;
        		default:
        				break;
 			}
