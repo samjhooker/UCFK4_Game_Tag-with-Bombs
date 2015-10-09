@@ -210,6 +210,18 @@ void goWest(Character *player, int transmit){
 
 }
 
+
+void placeBomb(Character *player, int transmit){
+
+  matrix[player->prevX][player->prevY] = 'x';
+  if (transmit == 1){
+    ir_uart_putc ('b');
+  }
+
+}
+
+
+
 int main (void)
 {
 
@@ -298,80 +310,36 @@ int main (void)
         navswitch_update ();
 
 
-    if (navswitch_push_event_p (NAVSWITCH_NORTH)){
-
+    if (navswitch_push_event_p (NAVSWITCH_NORTH))
 			goNorth(&player1, 1);
-      /*if (matrix[player1.x][player1.y + 1] != 'e'){
 
-        player1.prevX = player1.x;
-        player1.prevY = player1.y;
 
-        matrix[player1.x][player1.y] = '0';
-        player1.y++;
-        matrix[player1.x][player1.y] = '1';
-        ir_uart_putc ('n');
-      }*/
-		}
+    if (navswitch_push_event_p (NAVSWITCH_SOUTH))
+      goSouth(&player1, 1);
 
-    if (navswitch_push_event_p (NAVSWITCH_SOUTH)){
-      	goSouth(&player1, 1);
-			/*if (matrix[player1.x][player1.y - 1] != 'e'){
-
-				player1.prevX = player1.x;
-				player1.prevY = player1.y;
-
-				matrix[player1.x][player1.y] = '0';
-				player1.y--;
-				matrix[player1.x][player1.y] = '1';
-        ir_uart_putc ('s');
-			}*/
-		}
-
-		if (navswitch_push_event_p (NAVSWITCH_EAST)){
+		if (navswitch_push_event_p (NAVSWITCH_EAST))
       goEast(&player1, 1);
-		/*	if (matrix[player1.x+1][player1.y] != 'e'){
 
-				player1.prevX = player1.x;
-				player1.prevY = player1.y;
-
-				matrix[player1.x][player1.y] = '0';
-				player1.x++;
-				matrix[player1.x][player1.y] = '1';
-        ir_uart_putc ('e');
-			}*/
-		}
-
-        if (navswitch_push_event_p (NAVSWITCH_WEST)){
-          goWest(&player1, 1);
-			/*if (matrix[player1.x-1][player1.y] != 'e'){
-
-				player1.prevX = player1.x;
-				player1.prevY = player1.y;
-
-				matrix[player1.x][player1.y] = '0';
-				player1.x--;
-				matrix[player1.x][player1.y] = '1';
-        ir_uart_putc ('w');
-			}*/
-		}
+    if (navswitch_push_event_p (NAVSWITCH_WEST))
+      goWest(&player1, 1);
 
 
 		if (player1.hasBomb == 1){
-			//pio_output_high (LED_PIO);
+			pio_output_high (LED_PIO);
 		}else{
-		//	pio_output_low (LED_PIO);
+			pio_output_low (LED_PIO);
 		}
 
 
 
-        /* TODO: Transmit the character over IR on a NAVSWITCH_PUSH
-           event.  */
-      if (navswitch_push_event_p (NAVSWITCH_PUSH)){
 
-		      if (player1.hasBomb == 1){
-				        matrix[player1.prevX][player1.prevY] = 'x';
-			        }
-			    player1.hasBomb = 0;
+    if (navswitch_push_event_p (NAVSWITCH_PUSH)){
+
+		  if (player1.hasBomb == 1){
+				  //matrix[player1.prevX][player1.prevY] = 'x';
+          placeBomb(&player1, 1);
+			}
+			player1.hasBomb = 0;
 		}
 
         //revieve???
@@ -380,47 +348,21 @@ int main (void)
 			char character = ir_uart_getc ();
       switch(character){
     			case 'n':
-       				//goNorth(otherPlayer, 0);
-              pio_output_high (LED_PIO);
-              player2.prevX = player2.x;
-              player2.prevY = player2.y;
-
-              matrix[player2.x][player2.y] = '0';
-              player2.y--;
-              matrix[player2.x][player2.y] = '1';
+       				goSouth(&player2, 0);
               break;
     			case 's'  :
-            pio_output_low (LED_PIO);
-      				//goSouth(otherPlayer, 0);
-              player2.prevX = player2.x;
-              player2.prevY = player2.y;
-
-              matrix[player2.x][player2.y] = '0';
-              player2.y++;
-              matrix[player2.x][player2.y] = '1';
+      				goNorth(&player2, 0);
        				break;
     			case 'e'  :
-      				//goEast(otherPlayer, 0);
-              player2.prevX = player2.x;
-              player2.prevY = player2.y;
-
-              matrix[player2.x][player2.y] = '0';
-              player2.x--;
-              matrix[player2.x][player2.y] = '1';
+      				goWest(&player2, 0);
        				break;
-       			case 'w'  :
-      				//goWest(otherPlayer, 0);
-              player2.prevX = player2.x;
-              player2.prevY = player2.y;
-
-              matrix[player2.x][player2.y] = '0';
-              player2.x++;
-              matrix[player2.x][player2.y] = '1';
+       		case 'w'  :
+      				goEast(&player2, 0);
        				break;
-       		//	case 'b'  :
-      				//placeBomb(otherPlayer, 0);
-       			//	break;
-       			default:
+       		case 'b'  :
+      				placeBomb(&player2, 0);
+       				break;
+       		default:
        				break;
 			}
 		}
