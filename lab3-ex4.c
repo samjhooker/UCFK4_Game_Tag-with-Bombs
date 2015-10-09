@@ -1,3 +1,13 @@
+/*
+'Tag, with bombs'
+ENCE260 Assignment;
+Written by Samuel Hooker and Ben Lilburne
+6/10/15
+*/
+
+
+
+
 #include "system.h"
 #include "pacer.h"
 #include "navswitch.h"
@@ -17,6 +27,9 @@ int win = 0;
 int lose = 0;
 
 
+/*
+Struct defining the stored properties for a single character instance
+*/
 typedef struct {
     int x;
     int y;
@@ -27,7 +40,12 @@ typedef struct {
 
 
 
-
+/*
+converts a given string of characters into an binary integer with 0 being zero and anything else being one
+str: the string to be converted into an integer
+bombsActive: toggles the flash, ie, the char 'x' to be counted as a bit or not
+returns: integer representation of the given string
+*/
 int stringToInt(char* str, int bombsActive){
 	str++;
     int result = 0;
@@ -48,10 +66,7 @@ int stringToInt(char* str, int bombsActive){
 }
 
 
-/*int stringToBinary(char *s) {
-  return (int) strtol(s, NULL, 2);
-}*/
-
+// the main gameboard used for the application
 char* matrix[] ={"eeeeeeeee",
 				  "eaaaaaaae",
 				  "ebbbbbbbe",
@@ -66,8 +81,8 @@ char* matrix[] ={"eeeeeeeee",
 				  "ejjjjjjje",
 				  "eeeeeeeee"};
 
-/** Define PIO pins driving LED matrix rows.  */
 
+// list of all pins driving rows in the LED matrix
 static const pio_t rows[] =
 {
     LEDMAT_ROW1_PIO, LEDMAT_ROW2_PIO, LEDMAT_ROW3_PIO,
@@ -76,7 +91,7 @@ static const pio_t rows[] =
 };
 
 
-/** Define PIO pins driving LED matrix columns.  */
+// list of all pins driving columns in the LED matrix
 static const pio_t cols[] =
 {
     LEDMAT_COL1_PIO, LEDMAT_COL2_PIO, LEDMAT_COL3_PIO,
@@ -85,7 +100,11 @@ static const pio_t cols[] =
 
 
 
-
+/*
+displays a given integer, through binary representation, on a given column of the LED matrix
+row_pattern: the 8 bit integer to be displayer
+current_column: the column on ehich to display this integer
+*/
 static void display_column (uint8_t row_pattern, uint8_t current_column)
 
 {
@@ -127,7 +146,12 @@ static void display_column (uint8_t row_pattern, uint8_t current_column)
 
 
 
-
+/*
+draws frames for an explosion animation
+x: the x location of where to start the explosion
+y: the y location of where to start the explosion
+frame: the frame (1-3) of the animation to be applied
+*/
 void showExplosion(int x, int y, int frame){
   if(frame == 1){
   matrix[x+1][y+1] = 'w';
@@ -147,9 +171,14 @@ void showExplosion(int x, int y, int frame){
 }
 }
 
-
+/*
+checks for a win or a lose within the game for given points. checks for 'x', bombs, and for '1', other players
+if found, the win/lose animation is triggered and the other player is notified through IR
+x: the x position to check for a win/lose
+y: the y position to check for a win/lose
+*/
 void checkForWinOrLose(int x, int y){
-
+  if ((win == 0) && (lose ==0)){
   if (matrix[x][y] == '1') { //hit other player
     win = 1;
     ir_uart_putc ('L');
@@ -157,6 +186,7 @@ void checkForWinOrLose(int x, int y){
     lose = 1;
     ir_uart_putc ('W');
   }
+}
 
 }
 
