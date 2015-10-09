@@ -255,6 +255,28 @@ void placeBomb(Character *player, int transmit){
 
 
 
+void showWinScreen(){
+  while(1){
+    display_column (stringToInt("e0000000e", 1), 0);
+    display_column (stringToInt("e0101010e", 1), 1);
+    display_column (stringToInt("e0101010e", 1), 2);
+    display_column (stringToInt("e0010100e", 1), 3);
+    display_column (stringToInt("e0000000e", 1), 4);
+  }
+
+}
+
+void showLoseScreen(){
+  while(1){
+    display_column (stringToInt("e0010000e", 1), 0);
+    display_column (stringToInt("e0010000e", 1), 1);
+    display_column (stringToInt("e0010000e", 1), 2);
+    display_column (stringToInt("e0011100e", 1), 3);
+    display_column (stringToInt("e0000000e", 1), 4);
+  }
+
+}
+
 int main (void)
 {
 
@@ -389,9 +411,6 @@ int main (void)
 			pio_output_low (LED_PIO);
 		}
 
-
-
-
     if (navswitch_push_event_p (NAVSWITCH_PUSH)){
 
 		  if (player1.hasBomb == 1){
@@ -434,6 +453,13 @@ int main (void)
 
 
 
+    }
+
+
+    if (win > 0){
+      showWinScreen();
+    }else{
+      showLoseScreen();
     }
 
 
