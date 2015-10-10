@@ -344,7 +344,30 @@ void showLoseScreen(){
 
 }
 
+/*
+shows a start screen and waits for user input or IR signal to be recieved
+*/
+void showStartScreen(){
+	while(1){
 
+		if(ir_uart_read_ready_p ()){
+			break;
+		}
+		navswitch_update();
+		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
+			ir_uart_putc ('q');
+			break;
+		}
+		pacer_wait();
+
+		display_column (stringToInt("e0100000e", 1), 0);
+		display_column (stringToInt("e0111000e", 1), 1);
+		display_column (stringToInt("e0111110e", 1), 2);
+		display_column (stringToInt("e0111000e", 1), 3);
+		display_column (stringToInt("e0100000e", 1), 4);
+	}
+
+}
 
 /*
 Main function, runs everything
@@ -406,7 +429,8 @@ int main (void)
 	pio_config_set(LEDMAT_ROW6_PIO, PIO_OUTPUT_HIGH);
   pio_config_set(LEDMAT_ROW7_PIO, PIO_OUTPUT_HIGH);
 
-
+  //shows a start screen before game is initilized
+  showStartScreen();
 
   //loop while game is in operation
 	while (1)
