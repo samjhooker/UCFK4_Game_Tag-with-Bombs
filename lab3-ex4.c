@@ -19,7 +19,7 @@ Written by Samuel Hooker and Ben Lilburne
 
 #define PACER_RATE 500
 #define MESSAGE_RATE 10
-#define BOMB_TIME 12 //seconds
+#define BOMB_TIME 6 //seconds
 #define BOMB_FLASH_TIME 0.2 //seconds
 #define LED_PIO PIO_DEFINE (PORT_C, 2)
 
@@ -360,11 +360,11 @@ void showStartScreen(){
 		}
 		pacer_wait();
 
-		display_column (stringToInt("e0100000e", 1), 0);
-		display_column (stringToInt("e0111000e", 1), 1);
-		display_column (stringToInt("e0111110e", 1), 2);
-		display_column (stringToInt("e0111000e", 1), 3);
-		display_column (stringToInt("e0100000e", 1), 4);
+		display_column (stringToInt("e0011100e", 1), 0);
+		display_column (stringToInt("e0111110e", 1), 1);
+		display_column (stringToInt("e0101010e", 1), 2);
+		display_column (stringToInt("e0011100e", 1), 3);
+		display_column (stringToInt("e0011100e", 1), 4);
 	}
 
 }
