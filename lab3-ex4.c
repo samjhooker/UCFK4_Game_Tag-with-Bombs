@@ -538,7 +538,7 @@ int main (void)
 
 
 	//checks whether there is something to recieve
-	if(ir_uart_read_ready_p ()){
+	if(ir_uart_read_ready_p () && win == 0 && lose == 0){
 			//recieves character
 			char character = ir_uart_getc ();
 
