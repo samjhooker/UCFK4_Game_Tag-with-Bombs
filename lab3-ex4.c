@@ -70,7 +70,7 @@ int stringToInt(char* str, int bombsActive){
 char* matrix[] ={"eeeeeeeee",
 					"eaaaaaaae",
 					"ebbbbbbbe",
-					"eccccccce",
+					"eccc1ccce",
 					"eddddddde",
 					"efffffffe",
 					//screen two starts here
