@@ -1,7 +1,7 @@
 # File:   Makefile
 # Author: M. P. Hayes, UCECE
 # Date:   12 Sep 2010
-# Descr:  Makefile for lab3-ex4
+# Descr:  Makefile for game
 
 # Definitions.
 CC = avr-gcc
@@ -12,11 +12,11 @@ DEL = rm
 
 
 # Default target.
-all: lab3-ex4.out
+all: game.out
 
 
 # Compile: create object files from C source files.
-lab3-ex4.o: lab3-ex4.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font5x7_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h
+game.o: game.c ../../drivers/avr/ir_uart.h ../../drivers/avr/system.h ../../drivers/display.h ../../drivers/navswitch.h ../../fonts/font5x7_1.h ../../utils/font.h ../../utils/pacer.h ../../utils/tinygl.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 ir_uart.o: ../../drivers/avr/ir_uart.c ../../drivers/avr/ir_uart.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer0.h ../../drivers/avr/usart1.h
@@ -61,21 +61,19 @@ tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.
 
 
 # Link: create ELF output file from object files.
-lab3-ex4.out: lab3-ex4.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o
+game.out: game.o ir_uart.o pio.o prescale.o system.o timer.o timer0.o usart1.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
 
 # Target: clean project.
 .PHONY: clean
-clean: 
+clean:
 	-$(DEL) *.o *.out *.hex
 
 
 # Target: program project.
 .PHONY: program
-program: lab3-ex4.out
-	$(OBJCOPY) -O ihex lab3-ex4.out lab3-ex4.hex
-	dfu-programmer atmega32u2 erase; dfu-programmer atmega32u2 flash lab3-ex4.hex; dfu-programmer atmega32u2 start
-
-
+program: game.out
+	$(OBJCOPY) -O ihex game.out game.hex
+	dfu-programmer atmega32u2 erase; dfu-programmer atmega32u2 flash game.hex; dfu-programmer atmega32u2 start
