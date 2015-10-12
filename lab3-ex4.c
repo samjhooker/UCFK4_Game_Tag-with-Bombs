@@ -344,10 +344,11 @@ void showWinScreen(){
 		display_column (stringToInt("e0101010e", 1), 2);
 		display_column (stringToInt("e0010100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
-	
+
+		navswitch_update();
 		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			main();
-			break;
+			//main();
+			//break;
 		}
 	}
 
@@ -364,9 +365,10 @@ void showLoseScreen(){
 		display_column (stringToInt("e0011100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
 
-		if (navswitch_push_event_p (NAVSWITCH_PUSH)){			
-			main();
-			break;
+		navswitch_update();
+		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
+			//main();
+			//break;
 		}
 	}
 
@@ -396,6 +398,13 @@ void showStartScreen(){
 
 }
 
+
+static int counter = 0;
+static int flashCounter = 0;
+static int flash = 1;
+static int explosionCounter = 0;
+
+
 /*
 Main function, runs everything
 return: 0 as per c convention
@@ -403,13 +412,13 @@ return: 0 as per c convention
 int main (void)
 {
 	//Brah this resets the matrix brah
-	resetMatrix()
+	resetMatrix();
 
 	//initiilize counters for lights
-	int counter = 0; 
-	int flashCounter = 0;
-	int flash = 1;
-	int explosionCounter = 0;
+	counter = 0;
+	flashCounter = 0;
+	flash = 1;
+	explosionCounter = 0;
 
 
 	//intiilizes chatacters
@@ -447,6 +456,7 @@ int main (void)
 	pio_config_set(LEDMAT_COL2_PIO, PIO_OUTPUT_HIGH);
 	pio_config_set(LEDMAT_COL3_PIO, PIO_OUTPUT_HIGH);
 	pio_config_set(LEDMAT_COL4_PIO, PIO_OUTPUT_HIGH);
+	int counter = 0;
 
 
 	pio_config_set(LEDMAT_ROW1_PIO, PIO_OUTPUT_HIGH);
@@ -465,7 +475,8 @@ int main (void)
 	{
 
 
-			//loop and counter to wait for the time for a bomb to spawn
+			//loop and counter to wait for the time for a bomb to spawn	int counter = 0;
+
 			counter ++;
 			if (counter > (PACER_RATE * BOMB_TIME)){
 				player1.hasBomb = 1;
@@ -526,14 +537,14 @@ int main (void)
 
 				//waits for time to continue
 				pacer_wait ();
-			
+
 
 			//updates navswitch
 				navswitch_update ();
 
 
 
-		//listeners for the navswitches. 
+		//listeners for the navswitches.
 		//when pressed, calls the directional functions with a transmission of IR to the other MCU
 		if (navswitch_push_event_p (NAVSWITCH_NORTH))
 			goNorth(&player1, 1);
