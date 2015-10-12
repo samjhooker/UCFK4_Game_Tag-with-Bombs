@@ -81,6 +81,24 @@ char* matrix[] ={"eeeeeeeee",
 					"ejjjjjjje",
 					"eeeeeeeee"};
 
+/*
+Duuude function totally resets the game matrix when a new game is started
+*/
+void resetMatrix(void){
+	matrix[0] = "eeeeeeeee";
+	matrix[1] = "eaaaaaaae";
+	matrix[2] = "ebbbbbbbe";
+	matrix[3] = "eccc1ccce";
+	matrix[4] = "eddddddde";
+	matrix[5] = "efffffffe";
+	//screen two starts here
+	matrix[6] = "eggggggge";
+	matrix[7] = "ehhhhhhhe";
+	matrix[8] = "e0001000e";
+	matrix[9] = "eiiiiiiie";
+	matrix[10] = "ejjjjjjje";
+	matrix[11] = "eeeeeeeee";
+	}
 
 // list of all pins driving rows in the LED matrix
 static const pio_t rows[] =
@@ -326,6 +344,11 @@ void showWinScreen(){
 		display_column (stringToInt("e0101010e", 1), 2);
 		display_column (stringToInt("e0010100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
+	
+		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
+			main();
+			break;
+		}
 	}
 
 }
@@ -340,6 +363,11 @@ void showLoseScreen(){
 		display_column (stringToInt("e0010000e", 1), 2);
 		display_column (stringToInt("e0011100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
+
+		if (navswitch_push_event_p (NAVSWITCH_PUSH)){			
+			main();
+			break;
+		}
 	}
 
 }
@@ -374,7 +402,8 @@ return: 0 as per c convention
 */
 int main (void)
 {
-
+	//Brah this resets the matrix brah
+	resetMatrix()
 
 	//initiilize counters for lights
 	int counter = 0; 
