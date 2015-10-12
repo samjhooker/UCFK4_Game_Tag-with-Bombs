@@ -358,7 +358,6 @@ void showStartScreen(){
 			ir_uart_putc ('q');
 			break;
 		}
-		pacer_wait();
 
 		display_column (stringToInt("e0011100e", 1), 0);
 		display_column (stringToInt("e0111110e", 1), 1);
