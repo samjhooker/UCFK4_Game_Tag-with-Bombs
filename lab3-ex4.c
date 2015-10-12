@@ -313,7 +313,7 @@ void goWest(Character *player, int transmit){
 
 		if (transmit == 1){
 			ir_uart_putc ('w');
-		}
+		}main
 
 	}
 
@@ -347,8 +347,8 @@ void showWinScreen(){
 
 		navswitch_update();
 		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			//main();
-			//break;
+			main();
+			break;
 		}
 	}
 
@@ -367,8 +367,8 @@ void showLoseScreen(){
 
 		navswitch_update();
 		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			//main();
-			//break;
+			main();
+			break;
 		}
 	}
 
@@ -404,7 +404,6 @@ static int flashCounter = 0;
 static int flash = 1;
 static int explosionCounter = 0;
 
-
 /*
 Main function, runs everything
 return: 0 as per c convention
@@ -413,12 +412,13 @@ int main (void)
 {
 	//Brah this resets the matrix brah
 	resetMatrix();
-
 	//initiilize counters for lights
 	counter = 0;
 	flashCounter = 0;
 	flash = 1;
 	explosionCounter = 0;
+	win = 0;
+	lose = 0;
 
 
 	//intiilizes chatacters
