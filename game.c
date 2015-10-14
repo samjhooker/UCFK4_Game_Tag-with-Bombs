@@ -263,12 +263,6 @@ void showWinScreen(){
 		display_column (stringToInt("e0101010e", 1), 2);
 		display_column (stringToInt("e0010100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
-
-		navswitch_update();
-		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			main();
-			break;
-		}
 	}
 
 }
@@ -283,12 +277,6 @@ void showLoseScreen(){
 		display_column (stringToInt("e0010000e", 1), 2);
 		display_column (stringToInt("e0011100e", 1), 3);
 		display_column (stringToInt("e0000000e", 1), 4);
-
-		navswitch_update();
-		if (navswitch_push_event_p (NAVSWITCH_PUSH)){
-			main();
-			break;
-		}
 	}
 
 }
