@@ -257,12 +257,19 @@ void placeBomb(Character *player, int transmit){
 shows the letter 'W' on the LED matrix. used for the winner
 */
 void showWinScreen(){
+
+
+	char* win[] = {"e0000000e", "e0101010e", "e0101010e", "e0010100e", "e0000000e"};
+	int screenIndex = 0;
+
 	while(1){
-		display_column (stringToInt("e0000000e", 1), 0);
-		display_column (stringToInt("e0101010e", 1), 1);
-		display_column (stringToInt("e0101010e", 1), 2);
-		display_column (stringToInt("e0010100e", 1), 3);
-		display_column (stringToInt("e0000000e", 1), 4);
+		display_column (stringToInt(win[screenIndex], 1), screenIndex);
+		pacer_wait();
+		if (screenIndex > 4){
+			screenIndex = 0;
+		}else{
+			screenIndex ++;
+		}
 	}
 
 }
@@ -271,12 +278,18 @@ void showWinScreen(){
 shows the letter 'L' on the LED matrix, used for the loser
 */
 void showLoseScreen(){
+
+	char* lose[] = {"e0010000e", "e0010000e", "e0010000e", "e0011100e", "e0000000e"};
+	int screenIndex = 0;
+
 	while(1){
-		display_column (stringToInt("e0010000e", 1), 0);
-		display_column (stringToInt("e0010000e", 1), 1);
-		display_column (stringToInt("e0010000e", 1), 2);
-		display_column (stringToInt("e0011100e", 1), 3);
-		display_column (stringToInt("e0000000e", 1), 4);
+		display_column (stringToInt(lose[screenIndex], 1), screenIndex);
+		pacer_wait();
+		if (screenIndex > 4){
+			screenIndex = 0;
+		}else{
+			screenIndex ++;
+		}
 	}
 
 }
@@ -285,7 +298,12 @@ void showLoseScreen(){
 shows a start screen and waits for user input or IR signal to be recieved
 */
 void showStartScreen(){
+
+	char* skull[] = {"e0011100e", "e0111110e", "e0101010e", "e0011100e", "e0011100e"};
+	int screenIndex = 0;
+
 	while(1){
+		pacer_wait();
 
 		if(ir_uart_read_ready_p ()){
 			break;
@@ -296,11 +314,15 @@ void showStartScreen(){
 			break;
 		}
 
-		display_column (stringToInt("e0011100e", 1), 0);
-		display_column (stringToInt("e0111110e", 1), 1);
-		display_column (stringToInt("e0101010e", 1), 2);
-		display_column (stringToInt("e0011100e", 1), 3);
-		display_column (stringToInt("e0011100e", 1), 4);
+		display_column (stringToInt(skull[screenIndex], 1), screenIndex);
+
+		if (screenIndex > 4){
+			screenIndex = 0;
+		}else{
+			screenIndex ++;
+		}
+
+
 	}
 
 }
