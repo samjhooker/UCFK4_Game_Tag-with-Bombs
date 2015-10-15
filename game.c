@@ -256,7 +256,7 @@ void placeBomb(Character *player, int transmit){
 /*
 shows the letter 'W' on the LED matrix. used for the winner
 */
-void showWinScreen(){
+void showWinScreen(void){
 
 
 	char* win[] = {"e0000000e", "e0101010e", "e0101010e", "e0010100e", "e0000000e"};
@@ -277,7 +277,7 @@ void showWinScreen(){
 /*
 shows the letter 'L' on the LED matrix, used for the loser
 */
-void showLoseScreen(){
+void showLoseScreen(void){
 
 	char* lose[] = {"e0010000e", "e0010000e", "e0010000e", "e0011100e", "e0000000e"};
 	int screenIndex = 0;
@@ -297,7 +297,7 @@ void showLoseScreen(){
 /*
 shows a start screen and waits for user input or IR signal to be recieved
 */
-void showStartScreen(){
+void showStartScreen(void){
 
 	char* skull[] = {"e0011100e", "e0111110e", "e0101010e", "e0011100e", "e0011100e"};
 	int screenIndex = 0;
